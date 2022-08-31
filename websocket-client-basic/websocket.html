@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title></title>
+		<script type="text/javascript" src="jquery.min.js"></script>
+		<script type="text/javascript" src="websocket.js"></script>
+	</head>
+	<body>
+		<div style="width: 100%;height: 100%;background-color: antiquewhite;">
+			<div style="width: 900px;height: 1000px;background-color: azure;margin-left: 20%;">
+				<div style="width: 900px;height: 30px;margin-left: 20%;"></div>
+				<div style="width: 900px;height: 50px;display: flex;flex-direction: row;">
+					<div style="margin-left: 10%;line-height: 50px;border: 1px solid mistyrose;background-color:mistyrose;width: 135px;text-align: center;">Websocket Url</div>
+					<input id="wsUrl" style="width: 550px;margin-left: 20px;"/>
+				</div>
+				<div style="width: 80%;height: 250px;margin-left: 10%;">
+					<textarea id="msgOfSend" style="height: 100%;width: 100%;margin-top: 50px; " placeholder="please text message here..."></textarea>
+				</div>
+				<div
+					style="width: 80%;height: 200px;margin-left: 10%;background-color:bisque;margin-top: 15%;display: flex;flex-direction: row;align-items: center;">
+					<div
+						style="line-height: 200px;background-color: ;width: 40%;height: 200px;margin-left: 7.5%;display: flex;flex-direction: column;align-items: center;">
+						<div onclick="createWebsocket()"
+							style="margin-top:40px;width: 200px;height: 100px;color: midnightblue;border-radius: 5px;border: 1px solid antiquewhite;background-color:lightblue;line-height: 50px;width: 200px;height: 50px;font-size: 18px;text-align: center;">
+							Get Connection</div>
+						<div id="connectSuccess"
+							style="margin-top:20px;width: 200px;height: 100px;color: midnightblue;border-radius: 5px;border: 1px solid antiquewhite;background-color: gainsboro;line-height: 50px;width: 200px;height: 50px;font-size: 18px;text-align: center;">
+							No Connection</div>
+					</div>
+					<div
+						style="line-height: 200px;background-color: ;width: 40%;height: 200px;margin-left: 7.5%;display: flex;flex-direction: column;align-items: center;">
+						<div onclick="sendMsg()"
+							style="margin-top:40px;width: 200px;height: 100px;color: midnightblue;border-radius: 5px;border: 1px solid antiquewhite;background-color:lightblue;line-height: 50px;width: 200px;height: 50px;font-size: 18px;text-align: center;">
+							Send Message</div>
+						<div onclick="sendMsg()"
+							style="margin-top:20px;width: 200px;height: 100px;color: midnightblue;border-radius: 5px;border: 1px solid antiquewhite;background-color:lightblue;line-height: 50px;width: 200px;height: 50px;font-size: 18px;text-align: center;">
+							Send Message</div>
+					</div>
+				</div>
+				<div style="width: 80%;height: 250px;margin-left: 10%;margin-top: 20px;">
+					<textarea id="msgOfRcv" style="height: 100%;width: 100%;margin-top: 50px;" placeholder="there shows messages from server..."></textarea>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script>
+		let websocket = null;
+		let url;
+		createWebsocket()
+		function createWebsocket() {
+			url = $("#wsUrl").val();
+			if(url&&url!=''){
+				websocket = new WebSocket(url);
+				websocket.onopen = function() {
+					console.log("websocket建立连接");
+					document.getElementById("connectSuccess").style.backgroundColor = "pink";
+					document.getElementById("connectSuccess").innerHTML= "Connection Succeeded"
+				};
+				websocket.onmessage = function(evt) {
+					$("#msgOfRcv").val(evt.data);
+				}
+				websocket.onerror = function(e) {
+					console.log(e);
+					document.getElementById("connectSuccess").style.backgroundColor = "#f0f0f0";
+					document.getElementById("connectSuccess").innerHTML= "Connection Failed"
+				};
+				websocket.onclose = function(e) {
+					console.log("Websocket Connection Closed");
+					console.log(e);
+				}
+			}
+		}
+
+		function sendMsg() {
+			websocket.send($("#msgOfSend").val())
+		}
+		
+		
+	</script>
+</html>
